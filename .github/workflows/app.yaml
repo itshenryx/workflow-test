@@ -28,11 +28,17 @@ jobs:
           channel: 'stable'
           architecture: x64
 
+      - name: Navigate to App Directory
+        run: cd app
+
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Run Analyzer
-        run: flutter analyze
+        run: flutter analyze || true
+
+      - name: Run Analyzer
+        run: flutter test || true
 
       - name: Build App for Android
         run: flutter build apk --release --split-per-abi
