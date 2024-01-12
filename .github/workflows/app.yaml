@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    name: Test, Build & Release
     runs-on: macos-latest
 
     steps:
@@ -31,23 +32,23 @@ jobs:
           architecture: x64
 
       - name: Get Dependencies
-        working-directory: /app
+        working-directory: app
         run: flutter pub get
 
       - name: Run Analyzer (non-blocking)
-        working-directory: /app
+        working-directory: app
         run: flutter analyze || true
 
       - name: Run Tests (non-blocking)
-        working-directory: /app
+        working-directory: app
         run: flutter test || true
 
       - name: Build App for Android
-        working-directory: /app
+        working-directory: app
         run: flutter build apk --release --split-per-abi
 
       - name: Build app for IOS
-        working-directory: /app
+        working-directory: app
         run: |
           flutter build ios --no-codesign
           cd build/ios/iphoneos
