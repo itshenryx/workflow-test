@@ -1,3 +1,5 @@
+name: "App CI/CD Pipeline"
+
 on:
   pull_request:
     branches:
@@ -7,11 +9,11 @@ on:
     branches:
       - main
       - master
-name: "Build & Release"
+
 jobs:
   build:
-    name: Build & Release
     runs-on: macos-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -28,22 +30,24 @@ jobs:
           channel: 'stable'
           architecture: x64
 
-      - name: Navigate to App Directory
-        run: cd app
-
       - name: Get Dependencies
+        working-directory: /app
         run: flutter pub get
 
-      - name: Run Analyzer
+      - name: Run Analyzer (non-blocking)
+        working-directory: /app
         run: flutter analyze || true
 
-      - name: Run Analyzer
+      - name: Run Tests (non-blocking)
+        working-directory: /app
         run: flutter test || true
 
       - name: Build App for Android
+        working-directory: /app
         run: flutter build apk --release --split-per-abi
 
       - name: Build app for IOS
+        working-directory: /app
         run: |
           flutter build ios --no-codesign
           cd build/ios/iphoneos
@@ -56,6 +60,6 @@ jobs:
       - name: Add to Releases tab
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+          artifacts: "app/build/app/outputs/apk/release/*,app/build/ios/iphoneos/app.ipa"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.RELEASE_TOKEN }}
